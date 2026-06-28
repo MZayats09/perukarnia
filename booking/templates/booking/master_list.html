@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block title %}Майстри — BarberShop{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <h1 class="fw-bold mb-4 text-center">Наші майстри</h1>
+    <div class="row g-4">
+        {% for master in masters %}
+        <div class="col-md-4">
+            <div class="card h-100 text-center p-4">
+                <div class="rounded-circle bg-dark mx-auto mb-3 d-flex align-items-center justify-content-center"
+                     style="width:90px;height:90px;font-size:2.5rem;color:white;">
+                    {{ master.first_name|first }}
+                </div>
+                <h4 class="fw-bold">{{ master.get_full_name }}</h4>
+                <p class="text-primary small mb-2">{{ master.specialization|default:"Майстер" }}</p>
+                {% if master.bio %}
+                <p class="text-muted small">{{ master.bio }}</p>
+                {% endif %}
+                {% if master.phone %}
+                <p class="small"><i class="bi bi-telephone"></i> {{ master.phone }}</p>
+                {% endif %}
+                <a href="{% url 'appointment_create' %}?master={{ master.pk }}" class="btn btn-primary mt-auto">
+                    Записатися до {{ master.first_name }}
+                </a>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col text-center text-muted py-5">Майстри ще не додані.</div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

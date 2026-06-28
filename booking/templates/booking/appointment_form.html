@@ -1,0 +1,121 @@
+{% extends 'base.html' %}
+{% block title %}Записатися — BarberShop{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-7">
+            <div class="card p-4 p-md-5">
+                <h2 class="fw-bold mb-1 text-center">Записатися на візит</h2>
+                <p class="text-muted text-center mb-4">Заповніть форму — ми підтвердимо запис</p>
+
+                <form method="post" id="appointmentForm">
+                    {% csrf_token %}
+
+                    <h6 class="text-uppercase text-muted mb-3 mt-2">Ваші дані</h6>
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label">{{ form.client_name.label }}</label>
+                            {{ form.client_name }}
+                            {% if form.client_name.errors %}
+                            <div class="text-danger small">{{ form.client_name.errors }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">{{ form.client_phone.label }}</label>
+                            {{ form.client_phone }}
+                            {% if form.client_phone.errors %}
+                            <div class="text-danger small">{{ form.client_phone.errors }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">{{ form.client_email.label }} <span class="text-muted">(необов'язково)</span></label>
+                            {{ form.client_email }}
+                        </div>
+                    </div>
+
+                    <h6 class="text-uppercase text-muted mb-3 mt-4">Послуга та майстер</h6>
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label">{{ form.service.label }}</label>
+                            {{ form.service }}
+                            {% if form.service.errors %}
+                            <div class="text-danger small">{{ form.service.errors }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">{{ form.master.label }}</label>
+                            {{ form.master }}
+                            {% if form.master.errors %}
+                            <div class="text-danger small">{{ form.master.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <h6 class="text-uppercase text-muted mb-3 mt-4">Дата та час</h6>
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label">{{ form.date.label }}</label>
+                            {{ form.date }}
+                            {% if form.date.errors %}
+                            <div class="text-danger small">{{ form.date.errors }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">{{ form.time.label }}</label>
+                            {{ form.time }}
+                            <div id="availableTimesHint" class="form-text text-success"></div>
+                            {% if form.time.errors %}
+                            <div class="text-danger small">{{ form.time.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label">{{ form.comment.label }}</label>
+                        {{ form.comment }}
+                    </div>
+
+                    {% if form.non_field_errors %}
+                    <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+                    {% endif %}
+
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="bi bi-calendar-check"></i> Підтвердити запис
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Підказка про вільний час при виборі майстра + дати
+const masterSelect = document.querySelector('[name="master"]');
+const dateInput = document.querySelector('[name="date"]');
+const hint = document.getElementById('availableTimesHint');
+
+async function checkAvailability() {
+    const masterId = masterSelect.value;
+    const date = dateInput.value;
+    if (!masterId || !date) return;
+
+    const response = await fetch(`/api/available-times/?master_id=${masterId}&date=${date}`);
+    const data = await response.json();
+
+    if (data.times.length > 0) {
+        hint.textContent = `Вільні години: ${data.times.join(', ')}`;
+    } else {
+        hint.textContent = 'На цю дату вільних годин немає';
+        hint.className = 'form-text text-danger';
+    }
+}
+
+masterSelect.addEventListener('change', checkAvailability);
+dateInput.addEventListener('change', checkAvailability);
+</script>
+{% endblock %}
