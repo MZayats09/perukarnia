@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% block title %}Запис підтверджено — BarberShop{% endblock %}
+
+{% block content %}
+<div class="container py-5 text-center">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card p-5">
+                <div class="text-success" style="font-size:5rem;">✅</div>
+                <h2 class="fw-bold mt-3">Запис підтверджено!</h2>
+                <p class="text-muted">Дякуємо, {{ appointment.client_name }}!</p>
+
+                <div class="bg-light rounded p-4 text-start mt-3">
+                    <table class="table table-borderless mb-0">
+                        <tr>
+                            <td class="text-muted">Майстер:</td>
+                            <td class="fw-bold">{{ appointment.master }}</td>
+                        </tr>
+                        <tr>
+                            <td class="text-muted">Послуга:</td>
+                            <td class="fw-bold">{{ appointment.service.name }}</td>
+                        </tr>
+                        <tr>
+                            <td class="text-muted">Ціна:</td>
+                            <td class="fw-bold">{{ appointment.service.price }} грн</td>
+                        </tr>
+                        <tr>
+                            <td class="text-muted">Дата:</td>
+                            <td class="fw-bold">{{ appointment.date }}</td>
+                        </tr>
+                        <tr>
+                            <td class="text-muted">Час:</td>
+                            <td class="fw-bold">{{ appointment.time }}</td>
+                        </tr>
+                    </table>
+                </div>
+
+                {% if appointment.client_email %}
+                <p class="text-muted small mt-3">
+                    <i class="bi bi-envelope"></i> Підтвердження надіслано на {{ appointment.client_email }}
+                </p>
+                {% endif %}
+
+                <div class="mt-4 d-flex gap-2 justify-content-center">
+                    <a href="{% url 'home' %}" class="btn btn-outline-secondary">На головну</a>
+                    <a href="{% url 'appointment_create' %}" class="btn btn-primary">Ще один запис</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

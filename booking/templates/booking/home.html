@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+{% block title %}BarberShop — Головна{% endblock %}
+
+{% block content %}
+<!-- Hero -->
+<section class="hero text-center">
+    <div class="container">
+        <h1>✂ BarberShop</h1>
+        <p class="lead mt-3 mb-4">Професійні стрижки, догляд за бородою та укладка. Ваш стиль — наша справа.</p>
+        <a href="{% url 'appointment_create' %}" class="btn btn-warning btn-lg px-5 me-2">
+            <i class="bi bi-calendar-plus"></i> Записатися онлайн
+        </a>
+        <a href="{% url 'service_list' %}" class="btn btn-outline-light btn-lg px-5">
+            Наші послуги
+        </a>
+    </div>
+</section>
+
+<!-- Послуги -->
+<section class="py-5">
+    <div class="container">
+        <h2 class="text-center mb-4 fw-bold">Наші послуги</h2>
+        <div class="row g-4">
+            {% for service in services %}
+            <div class="col-md-4">
+                <div class="card h-100 p-4 text-center">
+                    <div class="fs-1 mb-2">✂</div>
+                    <h5 class="fw-bold">{{ service.name }}</h5>
+                    <p class="text-muted">{{ service.description|default:"Професійна послуга від наших майстрів" }}</p>
+                    <div class="mt-auto">
+                        <span class="fs-4 fw-bold text-primary">{{ service.price }} грн</span>
+                        <br><small class="text-muted"><i class="bi bi-clock"></i> {{ service.duration }} хв</small>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <p class="text-center text-muted">Послуги ще не додані.</p>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Майстри -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <h2 class="text-center mb-4 fw-bold">Наші майстри</h2>
+        <div class="row g-4 justify-content-center">
+            {% for master in masters %}
+            <div class="col-md-3">
+                <div class="card h-100 text-center p-4">
+                    <div class="rounded-circle bg-secondary mx-auto mb-3 d-flex align-items-center justify-content-center"
+                         style="width:80px;height:80px;font-size:2rem;color:white;">
+                        {{ master.first_name|first }}
+                    </div>
+                    <h5 class="fw-bold">{{ master.get_full_name }}</h5>
+                    <p class="text-muted small">{{ master.specialization|default:"Майстер стрижки" }}</p>
+                    <a href="{% url 'appointment_create' %}?master={{ master.pk }}" class="btn btn-sm btn-outline-primary mt-auto">
+                        Записатися
+                    </a>
+                </div>
+            </div>
+            {% empty %}
+            <p class="text-center text-muted">Майстри ще не додані.</p>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Заклик до дії -->
+<section class="py-5 text-center" style="background:#0f3460; color:white;">
+    <div class="container">
+        <h2 class="fw-bold mb-3">Готові виглядати чудово?</h2>
+        <p class="lead mb-4">Запишіться онлайн за хвилину — ми підберемо зручний час!</p>
+        <a href="{% url 'appointment_create' %}" class="btn btn-warning btn-lg px-5">
+            <i class="bi bi-calendar-check"></i> Записатися зараз
+        </a>
+    </div>
+</section>
+{% endblock %}

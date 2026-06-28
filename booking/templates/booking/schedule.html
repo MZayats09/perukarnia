@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+{% block title %}Розклад — BarberShop{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <h1 class="fw-bold mb-4 text-center">Розклад доступності</h1>
+
+    <!-- Фільтр -->
+    <form method="get" class="card p-4 mb-4">
+        <div class="row g-3 align-items-end">
+            <div class="col-md-5">
+                <label class="form-label">Майстер</label>
+                <select name="master" class="form-select">
+                    <option value="">— Всі майстри —</option>
+                    {% for master in masters %}
+                    <option value="{{ master.pk }}" {% if master.pk == selected_master_id %}selected{% endif %}>
+                        {{ master.get_full_name }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Дата</label>
+                <input type="date" name="date" class="form-control" value="{{ selected_date }}">
+            </div>
+            <div class="col-md-3">
+                <button type="submit" class="btn btn-primary w-100">
+                    <i class="bi bi-search"></i> Перевірити
+                </button>
+            </div>
+        </div>
+    </form>
+
+    <!-- Сітка годин -->
+    <div class="row g-3">
+        {% for hour in work_hours %}
+        {% with hour_str=hour|time:"H:i" %}
+        <div class="col-4 col-md-2">
+            <div class="card text-center p-3
+                {% if hour_str in booked_times %}bg-danger text-white{% else %}bg-success text-white{% endif %}">
+                <strong>{{ hour|time:"H:i" }}</strong>
+                <small>{% if hour_str in booked_times %}Зайнято{% else %}Вільно{% endif %}</small>
+            </div>
+        </div>
+        {% endwith %}
+        {% endfor %}
+    </div>
+
+    <div class="mt-4 d-flex gap-3">
+        <span class="badge bg-success p-2">Вільно</span>
+        <span class="badge bg-danger p-2">Зайнято</span>
+    </div>
+
+    <div class="mt-4">
+        <a href="{% url 'appointment_create' %}" class="btn btn-primary">
+            <i class="bi bi-calendar-plus"></i> Записатися
+        </a>
+    </div>
+</div>
+{% endblock %}
