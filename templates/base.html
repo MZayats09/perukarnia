@@ -15,11 +15,8 @@
         .card:hover { transform: translateY(-4px); }
         .btn-primary { background: #0f3460; border-color: #0f3460; }
         .btn-primary:hover { background: #16213e; border-color: #16213e; }
-        .badge-pending { background-color: #ffc107; color: #000; }
-        .badge-confirmed { background-color: #198754; }
-        .badge-cancelled { background-color: #dc3545; }
-        .badge-completed { background-color: #0dcaf0; color: #000; }
         footer { background: #1a1a2e; color: #aaa; }
+        .nav-role-badge { font-size: 0.7rem; padding: 2px 8px; border-radius: 10px; }
     </style>
     {% block extra_css %}{% endblock %}
 </head>
@@ -38,18 +35,47 @@
                 <li class="nav-item"><a class="nav-link" href="{% url 'master_list' %}">Майстри</a></li>
                 <li class="nav-item"><a class="nav-link" href="{% url 'schedule' %}">Розклад</a></li>
             </ul>
-            <ul class="navbar-nav">
+            <ul class="navbar-nav align-items-center gap-2">
                 <li class="nav-item">
-                    <a class="nav-link btn btn-warning text-dark px-3 ms-2" href="{% url 'appointment_create' %}">
+                    <a class="nav-link btn btn-warning text-dark px-3" href="{% url 'appointment_create' %}">
                         <i class="bi bi-calendar-plus"></i> Записатися
                     </a>
                 </li>
-                {% if user.is_staff %}
-                <li class="nav-item ms-2">
-                    <a class="nav-link btn btn-outline-light px-3" href="{% url 'admin_dashboard' %}">
-                        <i class="bi bi-speedometer2"></i> Панель
-                    </a>
-                </li>
+
+                {% if user.is_authenticated %}
+                    {% if user.is_staff %}
+                    <li class="nav-item">
+                        <a class="nav-link btn btn-danger text-white px-3" href="{% url 'admin_dashboard' %}">
+                            <i class="bi bi-speedometer2"></i> Адмін-панель
+                        </a>
+                    </li>
+                    {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link btn btn-info text-dark px-3" href="{% url 'master_dashboard' %}">
+                            <i class="bi bi-scissors"></i> Мої записи
+                        </a>
+                    </li>
+                    {% endif %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle text-white" href="#" data-bs-toggle="dropdown">
+                            <i class="bi bi-person-circle"></i> {{ user.get_full_name|default:user.username }}
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><span class="dropdown-item-text text-muted small">
+                                {% if user.is_staff %}👑 Адміністратор{% else %}✂ Майстер{% endif %}
+                            </span></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{% url 'logout' %}">
+                                <i class="bi bi-box-arrow-right"></i> Вийти
+                            </a></li>
+                        </ul>
+                    </li>
+                {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link btn btn-outline-light px-3" href="{% url 'login' %}">
+                            <i class="bi bi-person-lock"></i> Увійти
+                        </a>
+                    </li>
                 {% endif %}
             </ul>
         </div>

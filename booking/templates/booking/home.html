@@ -16,6 +16,40 @@
     </div>
 </section>
 
+<!-- Вхід для персоналу -->
+{% if not user.is_authenticated %}
+<section class="py-3" style="background:#f8f9fa; border-bottom:1px solid #dee2e6;">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="d-flex flex-wrap gap-3 align-items-center justify-content-center">
+                    <span class="text-muted small">Ви адміністратор або майстер?</span>
+                    <a href="{% url 'login' %}" class="btn btn-dark">
+                        <i class="bi bi-person-lock"></i> Увійти до панелі управління
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% else %}
+<section class="py-3" style="background:#e8f4f8; border-bottom:1px solid #bee5eb;">
+    <div class="container text-center">
+        {% if user.is_staff %}
+        <span class="me-3">👑 Ви увійшли як адміністратор</span>
+        <a href="{% url 'admin_dashboard' %}" class="btn btn-sm btn-danger">
+            <i class="bi bi-speedometer2"></i> Відкрити панель адміністратора
+        </a>
+        {% else %}
+        <span class="me-3">✂ Ви увійшли як майстер</span>
+        <a href="{% url 'master_dashboard' %}" class="btn btn-sm btn-info">
+            <i class="bi bi-scissors"></i> Переглянути мої записи
+        </a>
+        {% endif %}
+    </div>
+</section>
+{% endif %}
+
 <!-- Послуги -->
 <section class="py-5">
     <div class="container">
@@ -66,7 +100,7 @@
     </div>
 </section>
 
-<!-- Заклик до дії -->
+<!-- CTA -->
 <section class="py-5 text-center" style="background:#0f3460; color:white;">
     <div class="container">
         <h2 class="fw-bold mb-3">Готові виглядати чудово?</h2>

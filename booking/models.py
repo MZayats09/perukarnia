@@ -1,8 +1,14 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 
 class Master(models.Model):
     """Модель майстра (барбера)"""
+    user = models.OneToOneField(
+        User, on_delete=models.SET_NULL, null=True, blank=True,
+        verbose_name='Акаунт користувача',
+        help_text='Прив\'яжіть акаунт, щоб майстер міг входити в систему'
+    )
     first_name = models.CharField(max_length=100, verbose_name='Ім\'я')
     last_name = models.CharField(max_length=100, verbose_name='Прізвище')
     phone = models.CharField(max_length=20, verbose_name='Телефон', blank=True)
@@ -61,12 +67,10 @@ class Appointment(models.Model):
         ('completed', 'Виконано'),
     ]
 
-    # Клієнт
     client_name = models.CharField(max_length=200, verbose_name='Ім\'я клієнта')
     client_phone = models.CharField(max_length=20, verbose_name='Телефон')
     client_email = models.EmailField(verbose_name='Email', blank=True)
 
-    # Послуга та майстер
     master = models.ForeignKey(
         Master, on_delete=models.CASCADE,
         verbose_name='Майстер', related_name='appointments'
@@ -76,11 +80,9 @@ class Appointment(models.Model):
         verbose_name='Послуга', related_name='appointments'
     )
 
-    # Час
     date = models.DateField(verbose_name='Дата')
     time = models.TimeField(verbose_name='Час')
 
-    # Статус та коментар
     status = models.CharField(
         max_length=20, choices=STATUS_CHOICES,
         default='pending', verbose_name='Статус'
@@ -92,7 +94,6 @@ class Appointment(models.Model):
         verbose_name = 'Запис'
         verbose_name_plural = 'Записи'
         ordering = ['-date', '-time']
-        # Не дозволяє двом клієнтам записатися до одного майстра в один час
         unique_together = ['master', 'date', 'time']
 
     def __str__(self):
